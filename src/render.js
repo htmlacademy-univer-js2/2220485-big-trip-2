@@ -1,8 +1,8 @@
 const RenderPosition = {
-  BEFOREBEGIN: 'beforebegin',
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-  AFTEREND: 'afterend',
+  BEFOREBEGIN: 'beforeBegin',
+  AFTERBEGIN: 'afterBegin',
+  BEFOREEND: 'beforeEnd',
+  AFTEREND: 'afterEnd',
 };
 
 const createElement = (template) => {
