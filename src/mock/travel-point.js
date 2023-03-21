@@ -26,3 +26,4 @@ export const generateTravelPoint = () => {
   };
 };
 
+export const getTravelPoints = () => Array.from({length: 5}, generateTravelPoint);
