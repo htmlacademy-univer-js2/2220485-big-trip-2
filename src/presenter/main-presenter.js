@@ -14,11 +14,10 @@ export default class MainPresenter {
 
   #pointListComponent = new TripPointsListView();
 
-
   constructor(tripEventsElement,tripControlsElement) {
     this.#tripEventsContainer = tripEventsElement;
     this.#tripControlsContainer = tripControlsElement;
-  }
+  };
 
   init (travelPointModel) {
     this.#travelPointModel = travelPointModel;
@@ -32,8 +31,8 @@ export default class MainPresenter {
 
     for (const travelPoint of this.#boardTravelPointModel) {
       this.#renderPoint(travelPoint);
-    }
-  }
+    };
+  };
 
   #renderPoint = (point) => {
     const pointComponent = new TripPointView(point);
