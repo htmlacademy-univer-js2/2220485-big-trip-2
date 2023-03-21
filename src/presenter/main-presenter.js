@@ -17,7 +17,7 @@ export default class MainPresenter {
   constructor(tripEventsElement,tripControlsElement) {
     this.#tripEventsContainer = tripEventsElement;
     this.#tripControlsContainer = tripControlsElement;
-  };
+  }
 
   init (travelPointModel) {
     this.#travelPointModel = travelPointModel;
@@ -31,8 +31,8 @@ export default class MainPresenter {
 
     for (const travelPoint of this.#boardTravelPointModel) {
       this.#renderPoint(travelPoint);
-    };
-  };
+    }
+  }
 
   #renderPoint = (point) => {
     const pointComponent = new TripPointView(point);
@@ -56,7 +56,7 @@ export default class MainPresenter {
 
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
       replacePointToForm();
-      document.addEventListener('keydown', onEscKeyDown)
+      document.addEventListener('keydown', onEscKeyDown);
     });
 
     pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
