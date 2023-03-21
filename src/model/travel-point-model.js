@@ -1,7 +1,15 @@
-import { generateTravelPoint } from "../mock/travel-point";
-
 export default class TravelPointsModel {
-  points = Array.from({length: 5}, generateTravelPoint);
+  #travelPoints = null;
 
-  getTravelPoints = () => this.points;
+  constructor() {
+    this.#travelPoints = [];
+  }
+
+  init(travelPoints) {
+    this.#travelPoints = travelPoints;
+  }
+
+  get travelPoints() {
+    return this.#travelPoints;
+  }
 }
