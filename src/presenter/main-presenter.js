@@ -4,6 +4,7 @@ import TripSortView from '../view/trip-sort-view.js';
 import TripPointView from '../view/trip-point-view.js';
 import TripMenuView from '../view/menu-view.js';
 import TripFilterView from '../view/trip-filter-view.js';
+import NoPointsMessageView from '../view/no-points-message-view.js';
 import { render } from '../render.js';
 
 export default class MainPresenter {
@@ -23,14 +24,18 @@ export default class MainPresenter {
     this.#travelPointModel = travelPointModel;
     this.#boardTravelPointModel = [...this.#travelPointModel.travelPoints];
 
-    render(new TripMenuView(), this.#tripControlsContainer);
-    render(new TripFilterView(), this.#tripControlsContainer);
+    if (this.#boardTravelPointModel.length === 0) {
+      render(new NoPointsMessageView(), this.#tripEventsContainer);
+    } else {
+      render(new TripMenuView(), this.#tripControlsContainer);
+      render(new TripFilterView(), this.#tripControlsContainer);
 
-    render(new TripSortView(), this.#tripEventsContainer);
-    render(this.#pointListComponent, this.#tripEventsContainer);
+      render(new TripSortView(), this.#tripEventsContainer);
+      render(this.#pointListComponent, this.#tripEventsContainer);
 
-    for (const travelPoint of this.#boardTravelPointModel) {
-      this.#renderPoint(travelPoint);
+      for (const travelPoint of this.#boardTravelPointModel) {
+        this.#renderPoint(travelPoint);
+      }
     }
   }
 
