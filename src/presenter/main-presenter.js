@@ -5,13 +5,14 @@ import TripPointView from '../view/trip-point-view.js';
 import TripMenuView from '../view/menu-view.js';
 import TripFilterView from '../view/trip-filter-view.js';
 import NoPointsMessageView from '../view/no-points-message-view.js';
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 
 export default class MainPresenter {
   #tripEventsContainer = null;
   #tripControlsContainer = null;
   #travelPointModel = null;
   #boardTravelPointModel = null;
+  #offers = null;
 
   #pointListComponent = new TripPointsListView();
 
@@ -23,6 +24,7 @@ export default class MainPresenter {
   init (travelPointModel) {
     this.#travelPointModel = travelPointModel;
     this.#boardTravelPointModel = [...this.#travelPointModel.travelPoints];
+    this.#offers = [...this.#travelPointModel.offers];
 
     if (this.#boardTravelPointModel.length === 0) {
       render(new NoPointsMessageView(), this.#tripEventsContainer);
@@ -40,36 +42,40 @@ export default class MainPresenter {
   }
 
   #renderPoint = (point) => {
-    const pointComponent = new TripPointView(point);
-    const pointEditComponent = new TripEditView(point);
+    const previewPointComponent = new TripPointView(point, this.#offers);
+    const pointEditComponent = new TripEditView(point, this.#offers);
 
-    const replacePointToForm = () => {
-      this.#pointListComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+    const replacePreviewPointToEditForm = () => {
+      this.#pointListComponent.element.replaceChild(pointEditComponent.element, previewPointComponent.element);
     };
 
-    const replaceFormToPoint = () => {
-      this.#pointListComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+    const replaceEditFormToPreviewPoint = () => {
+      this.#pointListComponent.element.replaceChild(previewPointComponent.element, pointEditComponent.element);
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        replaceFormToPoint();
+        replaceEditFormToPreviewPoint();
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replacePointToForm();
+    previewPointComponent.setPreviewPointClickHandler(() => {
+      replacePreviewPointToEditForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      replaceFormToPoint();
+    pointEditComponent.setEditFormClickHandler(() => {
+      replaceEditFormToPreviewPoint();
+      document.addEventListener('keydown', onEscKeyDown);
+    });
+
+    pointEditComponent.setEditFormSubmitHandler(() => {
+      replaceEditFormToPreviewPoint();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    render(pointComponent, this.#pointListComponent.element);
+    render(previewPointComponent, this.#pointListComponent.element);
   };
 }
