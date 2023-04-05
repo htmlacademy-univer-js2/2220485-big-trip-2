@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomElement } from '../utils.js';
+import { getRandomInteger, getRandomElement } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { TYPES, DESTINATIONS } from '../consts.js';
 
@@ -36,8 +36,8 @@ export const getOffersByType = () => Array.from({length: TYPES.length}).map((val
 const offersByType = getOffersByType();
 
 export const generateTravelPoint = () => {
-  const start = dayjs().add(getRandomInteger(-1, 0),'day').add(getRandomInteger(-11, 0),'hour').add(getRandomInteger(-30, 0), 'minute');
-  const end = dayjs().add(getRandomInteger(0, 1),'day').add(getRandomInteger(0, 11),'hour').add(getRandomInteger(0, 30), 'minute');
+  const start = dayjs().add(getRandomInteger(-3, -1),'day').add(getRandomInteger(-11, 0),'hour').add(getRandomInteger(-30, 0), 'minute');
+  const end = dayjs().add(getRandomInteger(-1, 4),'day').add(getRandomInteger(0, 11),'hour').add(getRandomInteger(0, 30), 'minute');
 
   const offersByTypePoint = getRandomElement(offersByType);
   const allOfferIdsByTypePoint = offersByTypePoint.offers.map((offer) => offer.id);
@@ -53,4 +53,4 @@ export const generateTravelPoint = () => {
   };
 };
 
-export const getTravelPoints = () => Array.from({length: 5}, generateTravelPoint);
+export const getTravelPoints = () => Array.from({length: 10}, generateTravelPoint);

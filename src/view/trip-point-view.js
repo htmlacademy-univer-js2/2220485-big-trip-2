@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-import { duration } from '../utils.js';
+import { duration } from '../utils/travel-point.js';
 import { DESTINATIONS } from '../consts.js';
 
 const renderOffers = (allOffers, checkedOffers) => {

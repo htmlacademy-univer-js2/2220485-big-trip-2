@@ -1,11 +1,5 @@
 import dayjs from 'dayjs';
 
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
 export const duration = (dateFrom, dateTo) => {
   const start = dayjs(dateFrom);
   const end = dayjs(dateTo);
@@ -22,8 +16,7 @@ export const duration = (dateFrom, dateTo) => {
   return `${daysOutput} ${hoursOutput} ${minutesOutput}`;
 };
 
-export const getRandomElement = (elements) => {
-  const MIN = 0;
-  const max = elements.length - 1;
-  return elements[getRandomInteger(MIN, max)];
-};
+export const isTravelPointsNow = (dateFrom, dateTo) => dateFrom.isBefore(dayjs()) && dateTo.isAfter(dayjs());
+export const isTravelPointFuture = (dateFrom, dateTo) => dateFrom.isAfter(dayjs()) || isTravelPointsNow(dateFrom, dateTo);
+export const isTravelPointPast = (dateFrom, dateTo) => dateTo.isBefore(dayjs()) || isTravelPointsNow(dateFrom, dateTo);
+
