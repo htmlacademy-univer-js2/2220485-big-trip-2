@@ -21,3 +21,9 @@ export const duration = (dateFrom, dateTo) => {
 
   return `${daysOutput} ${hoursOutput} ${minutesOutput}`;
 };
+
+export const getRandomElement = (elements) => {
+  const MIN = 0;
+  const max = elements.length - 1;
+  return elements[getRandomInteger(MIN, max)];
+};
