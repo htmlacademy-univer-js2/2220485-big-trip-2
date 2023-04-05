@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { DESTINATIONS } from '../consts.js';
-import { getRandomInteger } from '../utils.js';
+import { getRandomInteger } from '../utils/common.js';
 
 const renderOffers = (allOffers, checkedOffers) => {
   let result = '';

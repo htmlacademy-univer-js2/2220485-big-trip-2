@@ -5,7 +5,8 @@ import TripPointView from '../view/trip-point-view.js';
 import TripMenuView from '../view/menu-view.js';
 import TripFilterView from '../view/trip-filter-view.js';
 import NoPointsMessageView from '../view/no-points-message-view.js';
-import { render } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
+import { generateFilter } from '../mock/filter.js';
 
 export default class MainPresenter {
   #tripEventsContainer = null;
@@ -30,7 +31,11 @@ export default class MainPresenter {
       render(new NoPointsMessageView(), this.#tripEventsContainer);
     } else {
       render(new TripMenuView(), this.#tripControlsContainer);
-      render(new TripFilterView(), this.#tripControlsContainer);
+      const controlFiltersElement = document.querySelector('.trip-controls__filters');
+
+      const filters = generateFilter(travelPointModel.travelPoints);
+
+      render(new TripFilterView(filters), controlFiltersElement);
 
       render(new TripSortView(), this.#tripEventsContainer);
       render(this.#pointListComponent, this.#tripEventsContainer);
@@ -46,11 +51,11 @@ export default class MainPresenter {
     const pointEditComponent = new TripEditView(point, this.#offers);
 
     const replacePreviewPointToEditForm = () => {
-      this.#pointListComponent.element.replaceChild(pointEditComponent.element, previewPointComponent.element);
+      replace(pointEditComponent, previewPointComponent);
     };
 
     const replaceEditFormToPreviewPoint = () => {
-      this.#pointListComponent.element.replaceChild(previewPointComponent.element, pointEditComponent.element);
+      replace(previewPointComponent, pointEditComponent);
     };
 
     const onEscKeyDown = (evt) => {

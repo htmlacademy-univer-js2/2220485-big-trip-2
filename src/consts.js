@@ -1,4 +1,4 @@
-import { getRandomInteger } from './utils.js';
+import { getRandomInteger } from './utils/common.js';
 
 const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 
@@ -51,4 +51,10 @@ const DESTINATIONS = [
   }
 ];
 
-export { TYPES, OFFERS, DESTINATIONS };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past'
+};
+
+export { TYPES, OFFERS, DESTINATIONS, FilterType };

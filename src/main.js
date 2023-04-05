@@ -5,7 +5,7 @@ import { getTravelPoints, getOffersByType } from './mock/travel-point.js';
 const pageHeaderElement = document.querySelector('.page-header');
 const pageMainElement = document.querySelector('.page-main');
 const tripEventsElement = pageMainElement.querySelector('.trip-events');
-const tripControlsElement = pageHeaderElement.querySelector('.trip-controls');
+const tripControlsElement = pageHeaderElement.querySelector('.trip-controls__navigation');
 
 const points = getTravelPoints();
 const offers = getOffersByType();
