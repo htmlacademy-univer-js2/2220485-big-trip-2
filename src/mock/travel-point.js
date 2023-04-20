@@ -1,6 +1,7 @@
 import { getRandomInteger, getRandomElement } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { TYPES, DESTINATIONS } from '../consts.js';
+import { nanoid } from 'nanoid';
 
 const Price = {
   MIN: 10,
@@ -43,6 +44,7 @@ export const generateTravelPoint = () => {
   const allOfferIdsByTypePoint = offersByTypePoint.offers.map((offer) => offer.id);
 
   return {
+    id:nanoid(),
     basePrice: generatePrice(),
     isFavorite: Boolean(getRandomInteger(0,1)),
     type: generateType(),

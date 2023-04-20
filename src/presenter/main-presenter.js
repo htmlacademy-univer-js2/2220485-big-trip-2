@@ -1,86 +1,93 @@
-import TripEditView from '../view/trip-edit-view.js';
 import TripPointsListView from '../view/points-list-view.js';
 import TripSortView from '../view/trip-sort-view.js';
-import TripPointView from '../view/trip-point-view.js';
 import TripMenuView from '../view/menu-view.js';
 import TripFilterView from '../view/trip-filter-view.js';
 import NoPointsMessageView from '../view/no-points-message-view.js';
-import { render, replace } from '../framework/render.js';
+import { render, RenderPosition } from '../framework/render.js';
 import { generateFilter } from '../mock/filter.js';
+import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/common.js';
 
 export default class MainPresenter {
   #tripEventsContainer = null;
   #tripControlsContainer = null;
+  #tripFiltersContainer = null;
   #travelPointModel = null;
   #boardTravelPointModel = null;
   #offers = null;
 
   #pointListComponent = new TripPointsListView();
+  #pointSortComponent = new TripSortView();
+  #noPointComponent = new NoPointsMessageView();
+  #pointMenuComponent = new TripMenuView();
 
-  constructor(tripEventsElement,tripControlsElement) {
-    this.#tripEventsContainer = tripEventsElement;
-    this.#tripControlsContainer = tripControlsElement;
+  #pointPresenter = new Map();
+
+  constructor(tripEventsContainer, tripControlsContainer, tripFiltersContainer,travelPointModel) {
+    this.#tripEventsContainer = tripEventsContainer;
+    this.#tripControlsContainer = tripControlsContainer;
+    this.#tripFiltersContainer = tripFiltersContainer;
+    this.#travelPointModel = travelPointModel;
   }
 
-  init (travelPointModel) {
-    this.#travelPointModel = travelPointModel;
+  init() {
     this.#boardTravelPointModel = [...this.#travelPointModel.travelPoints];
     this.#offers = [...this.#travelPointModel.offers];
 
     if (this.#boardTravelPointModel.length === 0) {
-      render(new NoPointsMessageView(), this.#tripEventsContainer);
+      this.#renderNoPoints();
     } else {
-      render(new TripMenuView(), this.#tripControlsContainer);
-      const controlFiltersElement = document.querySelector('.trip-controls__filters');
-
-      const filters = generateFilter(travelPointModel.travelPoints);
-
-      render(new TripFilterView(filters), controlFiltersElement);
-
-      render(new TripSortView(), this.#tripEventsContainer);
-      render(this.#pointListComponent, this.#tripEventsContainer);
-
-      for (const travelPoint of this.#boardTravelPointModel) {
-        this.#renderPoint(travelPoint);
-      }
+      this.#renderMenu();
+      this.#renderFilters();
+      this.#renderSort();
+      this.#renderPointsList();
     }
   }
 
+  #renderSort = () => {
+    render(this.#pointSortComponent,this.#tripEventsContainer, RenderPosition.AFTERBEGIN);
+  };
+
+  #renderFilters = () => {
+    const filters = generateFilter(this.#travelPointModel.travelPoints);
+    render(new TripFilterView(filters), this.#tripFiltersContainer);
+  };
+
+  #renderPoints = (from, to) => {
+    this.#boardTravelPointModel.slice(from, to).forEach((point) => this.#renderPoint(point));
+  };
+
+  #renderNoPoints = () => {
+    render(this.#noPointComponent, this.#tripEventsContainer);
+  };
+
+  #renderMenu = () => {
+    render(this.#pointMenuComponent, this.#tripControlsContainer);
+  };
+
   #renderPoint = (point) => {
-    const previewPointComponent = new TripPointView(point, this.#offers);
-    const pointEditComponent = new TripEditView(point, this.#offers);
+    const pointPresenter = new PointPresenter(this.#pointListComponent.element, this.#travelPointModel, this.#handlePointChange, this.#handleModeChange);
+    pointPresenter.init(point);
+    this.#pointPresenter.set(point.id, pointPresenter);
+  };
 
-    const replacePreviewPointToEditForm = () => {
-      replace(pointEditComponent, previewPointComponent);
-    };
+  #renderPointsList = () => {
+    render(this.#pointListComponent, this.#tripEventsContainer);
+    this.#renderPoints(0, this.#boardTravelPointModel.length);
+  };
 
-    const replaceEditFormToPreviewPoint = () => {
-      replace(previewPointComponent, pointEditComponent);
-    };
+  #clearPointsList = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
+  };
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceEditFormToPreviewPoint();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
+  #handlePointChange = (updatedPoint) => {
+    this.#boardTravelPointModel = updateItem(this.#boardTravelPointModel, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
 
-    previewPointComponent.setPreviewPointClickHandler(() => {
-      replacePreviewPointToEditForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditComponent.setEditFormClickHandler(() => {
-      replaceEditFormToPreviewPoint();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditComponent.setEditFormSubmitHandler(() => {
-      replaceEditFormToPreviewPoint();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(previewPointComponent, this.#pointListComponent.element);
+  #handleModeChange = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 }
+
