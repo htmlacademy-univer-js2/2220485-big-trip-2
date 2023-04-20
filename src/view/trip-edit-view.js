@@ -26,10 +26,10 @@ const createDestinationsOptionsTemplate = (destinations) =>
 const createDestinationDescriptionTemplate = (destinations, name) => destinations.find((el) => el.name === name).description;
 
 const createDestinationPicturesTemplate = (destinations) => {
-  const descriptionsArray = destinations.map(({pictures}) => pictures.map((el) => el.description));
-  const picturesArray = destinations.map(({pictures}) => pictures.map((el) => el.src));
+  const descriptions = destinations.map(({pictures}) => pictures.map((el) => el.description));
+  const pics = destinations.map(({pictures}) => pictures.map((el) => el.src));
   const rnd = getRandomInteger(0,3);
-  return `$<img class="event__photo" src="${picturesArray[rnd]}" alt="${descriptionsArray[rnd]}">`;
+  return `<img class="event__photo" src="${pics[rnd]}" alt="${descriptions[rnd]}">`;
 };
 
 const createTripEditTemplate = (point, offers) => {

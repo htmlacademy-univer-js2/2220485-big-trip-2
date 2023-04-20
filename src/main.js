@@ -4,14 +4,17 @@ import { getTravelPoints, getOffersByType } from './mock/travel-point.js';
 
 const pageHeaderElement = document.querySelector('.page-header');
 const pageMainElement = document.querySelector('.page-main');
-const tripEventsElement = pageMainElement.querySelector('.trip-events');
-const tripControlsElement = pageHeaderElement.querySelector('.trip-controls__navigation');
+const tripEventsContainer = pageMainElement.querySelector('.trip-events');
+const tripControlsContainer = pageHeaderElement.querySelector('.trip-controls__navigation');
+const tripFiltersContainer = document.querySelector('.trip-controls__filters');
+
 
 const points = getTravelPoints();
 const offers = getOffersByType();
 
 const travelPointModel = new TravelPointModel();
-const tripPresenter = new MainPresenter(tripEventsElement, tripControlsElement);
-
 travelPointModel.init(points, offers);
-tripPresenter.init(travelPointModel);
+
+const tripPresenter = new MainPresenter(tripEventsContainer, tripControlsContainer, tripFiltersContainer, travelPointModel);
+
+tripPresenter.init();
