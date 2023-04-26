@@ -20,3 +20,12 @@ export const isTravelPointsNow = (dateFrom, dateTo) => dateFrom.isBefore(dayjs()
 export const isTravelPointFuture = (dateFrom, dateTo) => dateFrom.isAfter(dayjs()) || isTravelPointsNow(dateFrom, dateTo);
 export const isTravelPointPast = (dateFrom, dateTo) => dateTo.isBefore(dayjs()) || isTravelPointsNow(dateFrom, dateTo);
 
+export const sortByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
+
+export const sortByDuration = (pointA, pointB) => {
+  const durationPointA = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
+  const durationPointB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
+  return durationPointB - durationPointA;
+};
+
+export const sortByDay = (pointA, pointB) => dayjs(pointA.dateFrom) - dayjs(pointB.dateFrom);

@@ -57,4 +57,10 @@ const FilterType = {
   PAST: 'past'
 };
 
-export { TYPES, OFFERS, DESTINATIONS, FilterType };
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
+export { TYPES, OFFERS, DESTINATIONS, FilterType, SortType };
