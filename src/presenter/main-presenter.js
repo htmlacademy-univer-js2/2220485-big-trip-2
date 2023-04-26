@@ -7,6 +7,8 @@ import { render, RenderPosition } from '../framework/render.js';
 import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/common.js';
+import { SortType } from '../consts.js';
+import { sortByPrice, sortByDuration, sortByDay } from '../utils/travel-point.js';
 
 export default class MainPresenter {
   #tripEventsContainer = null;
@@ -22,6 +24,8 @@ export default class MainPresenter {
   #pointMenuComponent = new TripMenuView();
 
   #pointPresenter = new Map();
+  #currentSortType = SortType.DAY;
+  #sourcedBoardPoints = [];
 
   constructor(tripEventsContainer, tripControlsContainer, tripFiltersContainer,travelPointModel) {
     this.#tripEventsContainer = tripEventsContainer;
@@ -32,6 +36,7 @@ export default class MainPresenter {
 
   init() {
     this.#boardTravelPointModel = [...this.#travelPointModel.travelPoints];
+    this.#sourcedBoardPoints = [...this.#travelPointModel.travelPoints];
     this.#offers = [...this.#travelPointModel.offers];
 
     if (this.#boardTravelPointModel.length === 0) {
@@ -46,6 +51,24 @@ export default class MainPresenter {
 
   #renderSort = () => {
     render(this.#pointSortComponent,this.#tripEventsContainer, RenderPosition.AFTERBEGIN);
+    this.#pointSortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+  };
+
+  #sortPoints = (sortType) => {
+    switch (sortType) {
+      case SortType.DAY:
+        this.#boardTravelPointModel.sort(sortByDay);
+        break;
+      case SortType.PRICE:
+        this.#boardTravelPointModel.sort(sortByPrice);
+        break;
+      case SortType.TIME:
+        this.#boardTravelPointModel.sort(sortByDuration);
+        break;
+      default:
+        this.#boardTravelPointModel = [...this.#sourcedBoardPoints];
+    }
+    this.#currentSortType = sortType;
   };
 
   #renderFilters = () => {
@@ -83,7 +106,17 @@ export default class MainPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#boardTravelPointModel = updateItem(this.#boardTravelPointModel, updatedPoint);
+    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortPoints(sortType);
+    this.#clearPointsList();
+    this.#renderPointsList();
   };
 
   #handleModeChange = () => {
