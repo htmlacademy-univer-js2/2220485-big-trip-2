@@ -10,7 +10,7 @@ const Price = {
 
 const ElementsCount = {
   MIN: 1,
-  MAX: 3
+  MAX: 5
 };
 
 const generateType = () => {
@@ -27,14 +27,16 @@ const generateOffer = (id, type) => ({
   price: generatePrice()
 });
 
+//генерация объекта с типом оффера и массивом с офферами для этого типа
 const generateOffersByType = (type) => ({
   type,
-  offers: Array.from({length: getRandomInteger(ElementsCount.MIN, ElementsCount.MAX)}).map((index) => generateOffer(index + 1, type)),
+  offers: Array.from({length: getRandomInteger(ElementsCount.MIN, ElementsCount.MAX)}).map((value, index) => generateOffer(index + 1, type)),
 });
 
 export const getOffersByType = () => Array.from({length: TYPES.length}).map((value, index) => generateOffersByType(TYPES[index]));
-
+//массив с объектами {ключ:тип поинта, значение: массив с офферами для этого типа}
 const offersByType = getOffersByType();
+// console.log(offersByType);
 
 export const generateTravelPoint = () => {
   const start = dayjs().add(getRandomInteger(-3, -1),'day').add(getRandomInteger(-11, 0),'hour').add(getRandomInteger(-30, 0), 'minute');
@@ -42,16 +44,21 @@ export const generateTravelPoint = () => {
 
   const offersByTypePoint = getRandomElement(offersByType);
   const allOfferIdsByTypePoint = offersByTypePoint.offers.map((offer) => offer.id);
+  // console.log('offersByTypePoint:', offersByTypePoint);
 
+  // console.log('allOfferIdsByTypePoint:', allOfferIdsByTypePoint);
+  // console.log('offerIds', Array.from({length: getRandomInteger(0, allOfferIdsByTypePoint.length)}).map(() => allOfferIdsByTypePoint[getRandomInteger(0, allOfferIdsByTypePoint.length - 1)]));
   return {
     id:nanoid(),
     basePrice: generatePrice(),
     isFavorite: Boolean(getRandomInteger(0,1)),
-    type: generateType(),
+    // type: generateType(),
+    type: offersByTypePoint.type,
     dateFrom: start,
     dateTo: end,
     offerIds: Array.from({length: getRandomInteger(0, allOfferIdsByTypePoint.length)}).map(() => allOfferIdsByTypePoint[getRandomInteger(0, allOfferIdsByTypePoint.length - 1)]),
-    destination: getRandomInteger(1, DESTINATIONS.length),
+    // offers: [... new Set(Array.from({ length: getRandomInteger(0, OFFERS.length) }, () => getRandomInteger(1, OFFERS.length - 1)))],
+    destinationId: getRandomInteger(1, DESTINATIONS.length),
   };
 };
 

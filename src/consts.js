@@ -1,8 +1,10 @@
 import { getRandomInteger } from './utils/common.js';
 
-const TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const OFFERS = ['Add luggage', 'Switch to comfort class', 'Add meal', 'Rent a car', 'Add breakfast'];
+// const OFFERS = ['Add luggage', 'Switch to comfort class', 'Add meal', 'Rent a car', 'Add breakfast'];
+
+// const OFFER_TITLES = ['Upgrade to a business class', 'Switch to comfort', 'Rent a car', 'Add breakfast', 'Order taxi', 'Add luggage'];
 
 const DESTINATIONS = [
   {
@@ -63,4 +65,4 @@ const SortType = {
   PRICE: 'price',
 };
 
-export { TYPES, OFFERS, DESTINATIONS, FilterType, SortType };
+export { TYPES, DESTINATIONS, FilterType, SortType };

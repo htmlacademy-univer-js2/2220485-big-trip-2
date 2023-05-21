@@ -14,7 +14,7 @@ const renderOffers = (allOffers, checkedOffers) => {
 };
 
 const createTripPointsTemplate = (travelPoint, offers) => {
-  const {basePrice, isFavorite, type, dateFrom, dateTo, offerIds, destination} = travelPoint;
+  const {basePrice, isFavorite, type, dateFrom, dateTo, offerIds, destinationId} = travelPoint;
 
   const startDay = dayjs(dateFrom).format('MMM D');
   const endDay = dayjs(dateTo).format('MMM D');
@@ -27,7 +27,7 @@ const createTripPointsTemplate = (travelPoint, offers) => {
   const rightStartDate = (startDay === endDay) ? startTime : startDay;
   const rightEndDate = (startDay === endDay) ? endTime : endDay;
 
-  const name = DESTINATIONS.find((item) => (item.id === destination)).name;
+  const destinationName = DESTINATIONS.find((item) => (item.id === destinationId)).name;
   const eventDuration = duration(dateFrom, dateTo);
 
   const allPointTypeOffers = offers.find((offer) => offer.type === type);
@@ -37,7 +37,7 @@ const createTripPointsTemplate = (travelPoint, offers) => {
     <time class="event__date" datetime="${startDate}">${startDay}</time>  <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${name}</h3>
+      <h3 class="event__title">${type} ${destinationName}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${startDayWithTime}">${rightStartDate}</time>
@@ -81,13 +81,13 @@ export default class TripPointView extends AbstractView {
   }
 
   setPreviewPointClickHandler = (callback) => {
-    this._callback.click = callback;
+    this._callback.PreviewPointClick = callback;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
   };
 
   #clickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.click();
+    this._callback.PreviewPointClick();
   };
 
   setFavoriteClickHandler = (callback) => {
