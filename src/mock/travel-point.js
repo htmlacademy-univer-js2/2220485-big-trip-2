@@ -27,14 +27,12 @@ const generateOffer = (id, type) => ({
   price: generatePrice()
 });
 
-//генерация объекта с типом оффера и массивом с офферами для этого типа
 const generateOffersByType = (type) => ({
   type,
   offers: Array.from({length: getRandomInteger(ElementsCount.MIN, ElementsCount.MAX)}).map((value, index) => generateOffer(index + 1, type)),
 });
 
 export const getOffersByType = () => Array.from({length: TYPES.length}).map((value, index) => generateOffersByType(TYPES[index]));
-//массив с объектами {ключ:тип поинта, значение: массив с офферами для этого типа}
 const offersByType = getOffersByType();
 // console.log(offersByType);
 
@@ -44,10 +42,7 @@ export const generateTravelPoint = () => {
 
   const offersByTypePoint = getRandomElement(offersByType);
   const allOfferIdsByTypePoint = offersByTypePoint.offers.map((offer) => offer.id);
-  // console.log('offersByTypePoint:', offersByTypePoint);
 
-  // console.log('allOfferIdsByTypePoint:', allOfferIdsByTypePoint);
-  // console.log('offerIds', Array.from({length: getRandomInteger(0, allOfferIdsByTypePoint.length)}).map(() => allOfferIdsByTypePoint[getRandomInteger(0, allOfferIdsByTypePoint.length - 1)]));
   return {
     id:nanoid(),
     basePrice: generatePrice(),
@@ -57,7 +52,6 @@ export const generateTravelPoint = () => {
     dateFrom: start,
     dateTo: end,
     offerIds: Array.from({length: getRandomInteger(0, allOfferIdsByTypePoint.length)}).map(() => allOfferIdsByTypePoint[getRandomInteger(0, allOfferIdsByTypePoint.length - 1)]),
-    // offers: [... new Set(Array.from({ length: getRandomInteger(0, OFFERS.length) }, () => getRandomInteger(1, OFFERS.length - 1)))],
     destinationId: getRandomInteger(1, DESTINATIONS.length),
   };
 };
