@@ -13,12 +13,6 @@ const ElementsCount = {
   MAX: 5
 };
 
-const generateType = () => {
-  const randomIndex = getRandomInteger(0, TYPES.length - 1);
-
-  return TYPES[randomIndex];
-};
-
 const generatePrice = () => getRandomInteger(Price.MIN, Price.MAX);
 
 const generateOffer = (id, type) => ({
@@ -34,7 +28,6 @@ const generateOffersByType = (type) => ({
 
 export const getOffersByType = () => Array.from({length: TYPES.length}).map((value, index) => generateOffersByType(TYPES[index]));
 const offersByType = getOffersByType();
-// console.log(offersByType);
 
 export const generateTravelPoint = () => {
   const start = dayjs().add(getRandomInteger(-3, -1),'day').add(getRandomInteger(-11, 0),'hour').add(getRandomInteger(-30, 0), 'minute');
@@ -47,7 +40,6 @@ export const generateTravelPoint = () => {
     id:nanoid(),
     basePrice: generatePrice(),
     isFavorite: Boolean(getRandomInteger(0,1)),
-    // type: generateType(),
     type: offersByTypePoint.type,
     dateFrom: start,
     dateTo: end,
