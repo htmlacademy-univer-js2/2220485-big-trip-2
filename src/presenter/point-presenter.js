@@ -100,7 +100,8 @@ export default class PointPresenter {
     this.#replaceEditFormToPreviewPoint();
   };
 
-  #handleEditSubmit = () => {
+  #handleEditSubmit = (point) => {
+    this.#changeData(point);
     this.#replaceEditFormToPreviewPoint();
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   };

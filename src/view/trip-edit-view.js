@@ -157,16 +157,12 @@ export default class TripEditView extends AbstractStatefulView {
   };
 
   #typePointChangeHandler = (evt) => {
-    console.log(this._state);
-
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
       offerIds: []
     });
-    console.log(this._state);
   };
-
 
   #offersChangeHandler = (evt) => {
     evt.preventDefault();
@@ -183,9 +179,20 @@ export default class TripEditView extends AbstractStatefulView {
     });
   };
 
+  #destinationChangeHandler = (evt) => {
+    const city = evt.target.value;
+    if (city === undefined) {
+      this.reset(this._state);
+    } else {
+      const id = DESTINATIONS.find((el) => el.name === city).id;
+      this.updateElement({ destinationId: id});
+    }
+  };
+
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-list').addEventListener('change', this.#typePointChangeHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
   };
 
   #setOuterHandlers = () => {
@@ -193,7 +200,9 @@ export default class TripEditView extends AbstractStatefulView {
     this.setEditFormClickHandler(this._callback.editFormClick);
   };
 
-  static parsePointToState = (point) => ({...point});
+  static parsePointToState = (point) => ({
+    ...point,
+  });
 
   static parseStateToPoint = (state) => {
     const point = {...state};
