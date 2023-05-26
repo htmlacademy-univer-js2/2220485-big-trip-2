@@ -47,16 +47,14 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === Mode.DEFAULT) {
-      replace(this.#previewPointComponent, prevPreviewPointComponent);
-    }
+    switch(this.#mode) {
+      case Mode.DEFAULT:
+        replace(this.#previewPointComponent, prevPreviewPointComponent);
+        break;
 
-    if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevPointEditComponent);
+      case Mode.EDITING:
+        replace(this.#pointEditComponent, prevPointEditComponent);
     }
-
-    remove(prevPointEditComponent);
-    remove(prevPreviewPointComponent);
   };
 
   destroy = () => {
@@ -66,6 +64,7 @@ export default class PointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceEditFormToPreviewPoint();
     }
   };
@@ -86,6 +85,7 @@ export default class PointPresenter {
   #handleEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceEditFormToPreviewPoint();
       document.removeEventListener('keydown', this.#handleEscKeyDown);
     }
@@ -96,10 +96,12 @@ export default class PointPresenter {
   };
 
   #handleEditClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceEditFormToPreviewPoint();
   };
 
-  #handleEditSubmit = () => {
+  #handleEditSubmit = (point) => {
+    this.#changeData(point);
     this.#replaceEditFormToPreviewPoint();
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   };
