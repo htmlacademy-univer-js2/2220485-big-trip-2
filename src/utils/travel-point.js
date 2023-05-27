@@ -1,5 +1,9 @@
 import dayjs from 'dayjs';
 
+const getDaysOutput = (days) => days <= 0 ? '' : `${`${days}`.padStart(2, '0')}D`;
+const getHoursOutput = (days, restHours) => (days <= 0 && restHours <= 0) ? '' : `${`${restHours}`.padStart(2, '0')}H`;
+const getMinutesOutput = (restMinutes) => `${`${restMinutes}`.padStart(2,'0')}M`;
+
 export const duration = (dateFrom, dateTo) => {
   const start = dayjs(dateFrom);
   const end = dayjs(dateTo);
@@ -9,9 +13,9 @@ export const duration = (dateFrom, dateTo) => {
   const restHours = Math.floor((difference - days * 1440) / 60);
   const restMinutes = difference - (days * 1440 + restHours * 60);
 
-  const daysOutput = (days) ? `${days}D` : '';
-  const hoursOutput = (restHours) ? `${restHours}H` : '';
-  const minutesOutput = (restMinutes) ? `${restMinutes}M` : '';
+  const daysOutput = getDaysOutput(days);
+  const hoursOutput = getHoursOutput(days, restHours);
+  const minutesOutput = getMinutesOutput(restMinutes);
 
   return `${daysOutput} ${hoursOutput} ${minutesOutput}`;
 };
