@@ -233,7 +233,6 @@ export default class TripEditView extends AbstractStatefulView {
         defaultDate: this._state.dateFrom,
         enableTime: true,
         maxDate: this._state.dateTo,
-        time_24hr: true,
         onChange: this.#dateFromChangeHandler,
       },
     );
@@ -247,7 +246,6 @@ export default class TripEditView extends AbstractStatefulView {
         defaultDate: this._state.dateTo,
         enableTime: true,
         minDate: this._state.dateFrom,
-        time_24hr: true,
         onChange: this.#dateToChangeHandler,
       },
     );
