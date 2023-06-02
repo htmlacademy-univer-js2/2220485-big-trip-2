@@ -2,6 +2,7 @@ import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 import { duration } from '../utils/travel-point.js';
 import { DESTINATIONS } from '../consts.js';
+import he from 'he';
 
 const renderOffers = (allOffers, checkedOffers) => {
   let result = '';
@@ -37,7 +38,7 @@ const createTripPointsTemplate = (travelPoint, offers) => {
     <time class="event__date" datetime="${startDate}">${startDay}</time>  <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destinationName}</h3>
+      <h3 class="event__title">${type} ${he.encode(destinationName)}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${startDayWithTime}">${rightStartDate}</time>

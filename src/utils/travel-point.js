@@ -20,9 +20,9 @@ export const duration = (dateFrom, dateTo) => {
   return `${daysOutput} ${hoursOutput} ${minutesOutput}`;
 };
 
-export const isTravelPointsNow = (dateFrom, dateTo) => dateFrom.isBefore(dayjs()) && dateTo.isAfter(dayjs());
-export const isTravelPointFuture = (dateFrom, dateTo) => dateFrom.isAfter(dayjs()) || isTravelPointsNow(dateFrom, dateTo);
-export const isTravelPointPast = (dateFrom, dateTo) => dateTo.isBefore(dayjs()) || isTravelPointsNow(dateFrom, dateTo);
+export const isTravelPointsBoth = (dateFrom, dateTo) =>  dayjs().diff(dateFrom, 'minute') > 0 && dayjs().diff(dateTo, 'minute') < 0;
+export const isTravelPointFuture = (dateFrom, dateTo) => dayjs().diff(dateFrom, 'minute') <= 0 || isTravelPointsBoth(dateFrom, dateTo);
+export const isTravelPointPast = (dateFrom, dateTo) => dayjs().diff(dateTo, 'minute') > 0 || isTravelPointsBoth(dateFrom, dateTo);
 
 export const sortByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
