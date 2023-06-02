@@ -4,6 +4,17 @@ import { capitalizeFirstLetter } from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import dayjs from 'dayjs';
+import he from 'he';
+
+const BLANK_POINT = {
+  basePrice: 0,
+  dateFrom: dayjs(),
+  dateTo: dayjs(),
+  destinationId: 1,
+  isFavorite: false,
+  offerIds: [],
+  type: TYPES[0],
+};
 
 const renderOffers = (allOffers, checkedOffers) => {
   let result = '';
@@ -39,11 +50,10 @@ const createTypePointTemplate = (checkedType) => TYPES.map((type) => `<div class
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-1">${capitalizeFirstLetter(type)}</label>
         </div>`).join('');
 
-const createTripEditTemplate = (point, offers) => {
-  const { destinationId, type, offerIds } = point;
+const createTripEditTemplate = (point, offers, isNewPoint) => {
+  const { destinationId, type, offerIds, basePrice } = point;
   const destinationName = DESTINATIONS.find((el) => el.id === destinationId).name;
   const allPointTypeOffers = offers.find((offer) => offer.type === type);
-
 
   return (`<li class="trip-events__item">
   <form class="event event--edit" action="#" method="post">
@@ -67,7 +77,7 @@ const createTripEditTemplate = (point, offers) => {
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destinationName)}" list="destination-list-1">
         <datalist id="destination-list-1">
           ${createDestinationsOptionsTemplate(DESTINATIONS)}
         </datalist>
@@ -86,12 +96,14 @@ const createTripEditTemplate = (point, offers) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <button class="event__rollup-btn" type="button">
+
+        ${isNewPoint ? '<button class="event__reset-btn" type="reset">Cancel</button>' :
+      `<button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__rollup-btn" type="button">`}
         <span class="visually-hidden">Open event</span>
       </button>
     </header>
@@ -120,11 +132,13 @@ export default class TripEditView extends AbstractStatefulView {
   #offers = null;
   #datepickerDateFrom = null;
   #datepickerDateTo = null;
+  #isNewPoint = null;
 
-  constructor(point, offers) {
+  constructor({point = BLANK_POINT, offers, isNewPoint}) {
     super();
     this._state = TripEditView.parsePointToState(point);
     this.#offers = offers;
+    this.#isNewPoint = isNewPoint;
 
     this.#setInnerHandlers();
     this.#setOuterHandlers();
@@ -133,7 +147,7 @@ export default class TripEditView extends AbstractStatefulView {
   }
 
   get template() {
-    return createTripEditTemplate(this._state, this.#offers);
+    return createTripEditTemplate(this._state, this.#offers, this.#isNewPoint);
   }
 
   removeElement = () => {
@@ -152,10 +166,15 @@ export default class TripEditView extends AbstractStatefulView {
 
   setEditFormClickHandler = (callback) => {
     this._callback.editFormClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickFormHandler);
   };
 
-  #clickHandler = (evt) => {
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#editFormDeleteHandler);
+  };
+
+  #clickFormHandler = (evt) => {
     evt.preventDefault();
     this._callback.editFormClick();
   };
@@ -178,6 +197,7 @@ export default class TripEditView extends AbstractStatefulView {
     this.#setOuterHandlers();
     this.#setDatepickerDateFrom();
     this.#setDatepickerDateTo();
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   #typePointChangeHandler = (evt) => {
@@ -211,6 +231,13 @@ export default class TripEditView extends AbstractStatefulView {
       const id = DESTINATIONS.find((el) => el.name === city).id;
       this.updateElement({ destinationId: id});
     }
+  };
+
+  #priceChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value
+    });
   };
 
   #dateFromChangeHandler = ([userDate]) => {
@@ -251,15 +278,24 @@ export default class TripEditView extends AbstractStatefulView {
     );
   };
 
+  #editFormDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(TripEditView.parseStateToPoint(this._state));
+  };
+
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-list').addEventListener('change', this.#typePointChangeHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#priceChangeHandler);
   };
 
   #setOuterHandlers = () => {
+    if (!this.#isNewPoint) {
+      this.setEditFormClickHandler(this._callback.editFormClick);
+    }
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setEditFormSubmitHandler(this._callback.submitForm);
-    this.setEditFormClickHandler(this._callback.editFormClick);
   };
 
   static parsePointToState = (point) => ({

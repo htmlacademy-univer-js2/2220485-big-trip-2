@@ -1,6 +1,7 @@
 import TripEditView from '../view/trip-edit-view.js';
 import TripPointView from '../view/trip-point-view.js';
 import { render, replace, remove } from '../framework/render.js';
+import { UpdateType, UserAction } from '../consts.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -18,6 +19,7 @@ export default class PointPresenter {
   #changeData = null;
   #changeMode = null;
   #mode = Mode.DEFAULT;
+  #isNewPoint = false;
 
   constructor(pointListComponent, travelPointModel, changeData, changeMode){
     this.#pointListComponent = pointListComponent;
@@ -34,11 +36,12 @@ export default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#previewPointComponent = new TripPointView(point, this.#offers);
-    this.#pointEditComponent = new TripEditView(point, this.#offers);
+    this.#pointEditComponent = new TripEditView({point: point, offers: this.#offers, isNewPoint: this.#isNewPoint});
 
     this.#previewPointComponent.setPreviewPointClickHandler(this.#handlePreviewPointClick);
     this.#pointEditComponent.setEditFormClickHandler(this.#handleEditClick);
     this.#pointEditComponent.setEditFormSubmitHandler(this.#handleEditSubmit);
+    this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     this.#previewPointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
@@ -101,12 +104,26 @@ export default class PointPresenter {
   };
 
   #handleEditSubmit = (point) => {
-    this.#changeData(point);
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point);
     this.#replaceEditFormToPreviewPoint();
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   };
 
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
   };
 }

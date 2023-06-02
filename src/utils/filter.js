@@ -6,4 +6,3 @@ export const filter = {
   [FilterType.FUTURE]: (points) => points.filter((point) => isTravelPointFuture(point.dateFrom, point.dateTo)),
   [FilterType.PAST]: (points) => points.filter((point) => isTravelPointPast(point.dateFrom, point.dateTo)),
 };
-
