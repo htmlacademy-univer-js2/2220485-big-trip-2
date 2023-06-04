@@ -1,21 +1,24 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 import { duration } from '../utils/travel-point.js';
-import { DESTINATIONS } from '../consts.js';
 import he from 'he';
 
-const renderOffers = (allOffers, checkedOffers) => {
-  let result = '';
-  allOffers.forEach((offer) => {
-    if (checkedOffers.includes(offer.id)) {
-      result = `${result}<li class="event__offer"><span class="event__offer-title">${offer.title}</span>&plus;&euro;&nbsp;<span class="event__offer-price">${offer.price}</span></li>`;
-    }
-  });
-  return result;
+const createOffersListTemplate = (type, pointOffers, allOffers) => {
+  const allOffersForType = allOffers.find((item) => item.type === type).offers;
+  const selectedOffers = pointOffers.map((offer) => allOffersForType.find((item) => item.id === offer));
+
+  return `<ul class="event__selected-offers">
+            ${selectedOffers.map((offer) =>
+    `<li class="event__offer">
+                <span class="event__offer-title">${offer.title}</span>
+                &plus;&euro;&nbsp;
+                <span class="event__offer-price">${offer.price}</span>
+            </li>`).join('\n')}
+          </ul>`;
 };
 
-const createTripPointsTemplate = (travelPoint, offers) => {
-  const {basePrice, isFavorite, type, dateFrom, dateTo, offerIds, destinationId} = travelPoint;
+const createTripPointsTemplate = (travelPoint, allOffers, allDestinations) => {
+  const {basePrice, isFavorite, type, dateFrom, dateTo, offers, destination} = travelPoint;
 
   const startDay = dayjs(dateFrom).format('MMM D');
   const endDay = dayjs(dateTo).format('MMM D');
@@ -28,32 +31,29 @@ const createTripPointsTemplate = (travelPoint, offers) => {
   const rightStartDate = (startDay === endDay) ? startTime : startDay;
   const rightEndDate = (startDay === endDay) ? endTime : endDay;
 
-  const destinationName = DESTINATIONS.find((item) => (item.id === destinationId)).name;
-  const eventDuration = duration(dateFrom, dateTo);
+  const name = allDestinations.find((item) => (item.id === destination)).name;
 
-  const allPointTypeOffers = offers.find((offer) => offer.type === type);
+  const pointDuration = duration(dateFrom, dateTo);
 
   return (`<li class="trip-events__item">
     <div class="event">
     <time class="event__date" datetime="${startDate}">${startDay}</time>  <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${he.encode(destinationName)}</h3>
+      <h3 class="event__title">${type} ${he.encode(name)}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${startDayWithTime}">${rightStartDate}</time>
           &mdash;
           <time class="event__end-time" datetime="${endDayWithTime}">${rightEndDate}</time>
         </p>
-        <p class="event__duration">${eventDuration}</p>
+        <p class="event__duration">${pointDuration}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
-      <ul class="event__selected-offers">
-        ${renderOffers(allPointTypeOffers.offers, offerIds)}
-      </ul>
+      ${offers ? createOffersListTemplate(type, offers, allOffers) : ''}
       <button class="event__favorite-btn ${isFavorite ? 'event__favorite-btn--active' : ''} " type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -69,16 +69,18 @@ const createTripPointsTemplate = (travelPoint, offers) => {
 
 export default class TripPointView extends AbstractView {
   #point = null;
-  #offers = null;
+  #allOffers = null;
+  #allDestinations = null;
 
-  constructor(point, offers) {
+  constructor(point, allOffers, allDestinations) {
     super();
     this.#point = point;
-    this.#offers = offers;
+    this.#allOffers = allOffers;
+    this.#allDestinations = allDestinations;
   }
 
   get template() {
-    return createTripPointsTemplate(this.#point, this.#offers);
+    return createTripPointsTemplate(this.#point, this.#allOffers, this.#allDestinations);
   }
 
   setPreviewPointClickHandler = (callback) => {

@@ -1,33 +1,34 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
-import TripEditView from '../view/trip-edit-view.js';
+import TripEditView from '../view/point-edit-view.js';
 import { UserAction, UpdateType } from '../consts.js';
 import { nanoid } from 'nanoid';
 
 export default class PointNewPresenter {
   #pointEditComponent = null;
   #pointListComponent = null;
-  #travelPointModel = null;
   #changeData = null;
   #offers = null;
+  #destinations = null;
   #destroyCallback = null;
 
-  constructor(pointListComponent, changeData, travelPointModel){
+  constructor(pointListComponent, changeData){
     this.#pointListComponent = pointListComponent;
-    this.#travelPointModel = travelPointModel;
     this.#changeData = changeData;
   }
 
-  init = (callback) => {
+  init = (callback, offers, destinations) => {
     this.#destroyCallback = callback;
 
     if (this.#pointEditComponent !== null) {
       return;
     }
-    this.#offers = [...this.#travelPointModel.offers];
+    this.#offers = offers;
+    this.#destinations = destinations;
 
     this.#pointEditComponent = new TripEditView({
       point: this.travelPointModel,
       offers: this.#offers,
+      destinations: this.#destinations,
       isNewPoint: true
     });
 
