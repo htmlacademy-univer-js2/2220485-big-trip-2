@@ -1,5 +1,3 @@
-import { getRandomInteger } from './utils/common.js';
-
 const Type = {
   TAXI: 'taxi',
   BUS: 'bus',
