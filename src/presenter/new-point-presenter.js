@@ -1,6 +1,6 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
 import TripEditView from '../view/point-edit-view.js';
-import { UserAction, UpdateType } from '../consts.js';
+import { UserAction, UpdateType } from '../const.js';
 
 export default class PointNewPresenter {
   #pointEditComponent = null;

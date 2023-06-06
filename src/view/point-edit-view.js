@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { Type } from '../consts.js';
-import { capitalizeFirstLetter } from '../utils/common.js';
+import { Type } from '../const.js';
+import { capitalizeFirstLetter } from '../utils/travel-point.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
@@ -217,10 +217,10 @@ export default class TripEditView extends AbstractStatefulView {
     });
   };
 
-  #offersChangeHandler = (e) => {
-    e.preventDefault();
+  #offersChangeHandler = (evt) => {
+    evt.preventDefault();
     const selectedOffers = this._state.offers;
-    const clickedOffer = parseInt((e.target.closest('div').childNodes[1].id).match(/\d+/g), 10);
+    const clickedOffer = parseInt((evt.target.closest('div').childNodes[1].id).match(/\d+/g), 10);
     const clickedOfferId = selectedOffers.indexOf(clickedOffer);
 
     if (clickedOfferId === -1) {
@@ -233,10 +233,10 @@ export default class TripEditView extends AbstractStatefulView {
     });
   };
 
-  #destinationChangeHandler = (e) => {
-    e.preventDefault();
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
     this.updateElement({
-      selectedDestinationName: e.target.value,
+      selectedDestinationName: evt.target.value,
     });
   };
 

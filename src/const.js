@@ -40,4 +40,7 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-export { Type, FilterType, SortType, UpdateType, UserAction, TimeLimit };
+const HOUR_MINUTES_COUNT = 60;
+const TOTAL_DAY_MINUTES_COUNT = 1440;
+
+export { Type, FilterType, SortType, UpdateType, UserAction, TimeLimit, HOUR_MINUTES_COUNT, TOTAL_DAY_MINUTES_COUNT };
