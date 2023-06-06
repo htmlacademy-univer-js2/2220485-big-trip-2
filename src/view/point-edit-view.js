@@ -3,13 +3,12 @@ import { Type } from '../consts.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import dayjs from 'dayjs';
 import he from 'he';
 
 const BLANK_POINT = {
   basePrice: 0,
-  dateFrom: dayjs(),
-  dateTo: dayjs(),
+  dateFrom: new Date(),
+  dateTo: new Date(),
   destination: 1,
   isFavorite: false,
   offers: [],
@@ -194,7 +193,7 @@ export default class TripEditView extends AbstractStatefulView {
 
   setEditFormSubmitHandler = (callback) => {
     this._callback.submitForm = callback;
-    this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitHandler);
+    // this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitHandler);
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
   };
 
@@ -216,7 +215,7 @@ export default class TripEditView extends AbstractStatefulView {
     this.updateElement({
       type: evt.target.value,
       offers: [],
-      availableOffers: this.#allOffers.find((item) => (item.type ===  evt.target.value)).offer
+      availableOffers: this.#allOffers.find((item) => (item.type === evt.target.value)).offer
     });
   };
 

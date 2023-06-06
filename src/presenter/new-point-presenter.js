@@ -1,7 +1,6 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
 import TripEditView from '../view/point-edit-view.js';
 import { UserAction, UpdateType } from '../consts.js';
-import { nanoid } from 'nanoid';
 
 export default class PointNewPresenter {
   #pointEditComponent = null;
@@ -57,7 +56,7 @@ export default class PointNewPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      { id: nanoid(), ...point },
+      point
     );
     this.destroy();
   };
