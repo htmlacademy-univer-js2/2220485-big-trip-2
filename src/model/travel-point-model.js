@@ -1,4 +1,4 @@
-import { UpdateType } from '../consts.js';
+import { UpdateType } from '../const.js';
 import Observable from '../framework/observable.js';
 
 export default class TravelPointsModel extends Observable {

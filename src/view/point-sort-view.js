@@ -1,4 +1,4 @@
-import { SortType } from '../consts.js';
+import { SortType } from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createTripSortTemplate = (currentSortType) => `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">

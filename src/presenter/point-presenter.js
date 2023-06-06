@@ -1,7 +1,7 @@
 import TripEditView from '../view/point-edit-view.js';
 import TripPointView from '../view/point-view.js';
 import { render, replace, remove } from '../framework/render.js';
-import { UpdateType, UserAction } from '../consts.js';
+import { UpdateType, UserAction } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',

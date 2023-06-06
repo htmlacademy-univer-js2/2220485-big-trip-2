@@ -4,7 +4,7 @@ import TripMenuView from '../view/menu-view.js';
 import NoPointsMessageView from '../view/no-points-message-view.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
-import { FilterType, SortType, TimeLimit, UpdateType, UserAction } from '../consts.js';
+import { FilterType, SortType, TimeLimit, UpdateType, UserAction } from '../const.js';
 import { sortByPrice, sortByDuration, sortByDay } from '../utils/travel-point.js';
 import { filter } from '../utils/filter.js';
 import PointNewPresenter from './new-point-presenter.js';
