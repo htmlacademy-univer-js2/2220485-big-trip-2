@@ -3,13 +3,12 @@ import { Type } from '../consts.js';
 import { capitalizeFirstLetter } from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
-import dayjs from 'dayjs';
 import he from 'he';
 
 const BLANK_POINT = {
-  basePrice: 0,
-  dateFrom: dayjs(),
-  dateTo: dayjs(),
+  basePrice: 100,
+  dateFrom: new Date(),
+  dateTo: new Date(),
   destination: 1,
   isFavorite: false,
   offers: [],
@@ -61,7 +60,7 @@ const getSelectedDestinationData = (destinationName, allDestinations) => {
   return selectedDestinationData;
 };
 
-const createTripEditTemplate = ({ selectedDestinationName, type, basePrice, offers }, allOffers, allDestinations, isNewPoint) => {
+const createTripEditTemplate = ({ selectedDestinationName, type, basePrice, offers, isDisabled, isSaving, isDeleting }, allOffers, allDestinations, isNewPoint) => {
   const selectedDestinationData = getSelectedDestinationData(selectedDestinationName, allDestinations);
   const allOffersForType = findOffersForType(type, allOffers);
 
@@ -73,7 +72,7 @@ const createTripEditTemplate = ({ selectedDestinationName, type, basePrice, offe
           <span class="visually-hidden">Choose event type</span>
           <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
         </label>
-        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" ${isDisabled ? 'disabled' : ''}>
 
         <div class="event__type-list">
           <fieldset class="event__type-group">
@@ -87,7 +86,7 @@ const createTripEditTemplate = ({ selectedDestinationName, type, basePrice, offe
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(selectedDestinationName)}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(selectedDestinationName)}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
         <datalist id="destination-list-1">
           ${createDestinationsOptionsTemplate(allDestinations)}
         </datalist>
@@ -95,10 +94,10 @@ const createTripEditTemplate = ({ selectedDestinationName, type, basePrice, offe
 
       <div class="event__field-group  event__field-group--time">
         <label class="visually-hidden" for="event-start-time-1">From</label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25" ${isDisabled ? 'disabled' : ''}>
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">To</label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35" ${isDisabled ? 'disabled' : ''}>
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -106,13 +105,12 @@ const createTripEditTemplate = ({ selectedDestinationName, type, basePrice, offe
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
       </div>
 
-      <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
 
-        ${isNewPoint ? '<button class="event__reset-btn" type="reset">Cancel</button>' :
-      `<button class="event__reset-btn" type="reset">Delete</button>
+        ${isNewPoint ? `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>` : `<button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">`}
         <span class="visually-hidden">Open event</span>
       </button>
@@ -194,7 +192,6 @@ export default class TripEditView extends AbstractStatefulView {
 
   setEditFormSubmitHandler = (callback) => {
     this._callback.submitForm = callback;
-    this.element.querySelector('.event__save-btn').addEventListener('click', this.#submitHandler);
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
   };
 
@@ -216,7 +213,7 @@ export default class TripEditView extends AbstractStatefulView {
     this.updateElement({
       type: evt.target.value,
       offers: [],
-      availableOffers: this.#allOffers.find((item) => (item.type ===  evt.target.value)).offer
+      availableOffers: this.#allOffers.find((item) => (item.type === evt.target.value)).offer
     });
   };
 
@@ -246,7 +243,7 @@ export default class TripEditView extends AbstractStatefulView {
   #priceChangeHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value
+      basePrice: parseInt(evt.target.value, 10),
     });
   };
 
@@ -316,6 +313,9 @@ export default class TripEditView extends AbstractStatefulView {
     ...point,
     selectedDestinationName: allDestinations.find((item) => (item.id === point.destination)).name,
     availableOffers: allOffers.find((item) => (item.type === point.type)).offers,
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false
   });
 
   static parseStateToPoint = (state, allDestinations) => {
@@ -325,6 +325,9 @@ export default class TripEditView extends AbstractStatefulView {
     };
     delete point.selectedDestinationName;
     delete point.availableOffers;
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
     return point;
   };
 }

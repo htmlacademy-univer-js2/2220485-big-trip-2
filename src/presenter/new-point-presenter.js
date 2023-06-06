@@ -1,7 +1,6 @@
 import { render, remove, RenderPosition } from '../framework/render.js';
 import TripEditView from '../view/point-edit-view.js';
 import { UserAction, UpdateType } from '../consts.js';
-import { nanoid } from 'nanoid';
 
 export default class PointNewPresenter {
   #pointEditComponent = null;
@@ -53,13 +52,31 @@ export default class PointNewPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
+  setSaving = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  };
+
   #handleFormSubmit = (point) => {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      { id: nanoid(), ...point },
+      point
     );
-    this.destroy();
   };
 
   #escKeyDownHandler = (evt) => {
