@@ -38,5 +38,8 @@ filterPresenter.init();
 travelPointModel.init().finally(() => {
   render(newPointButtonComponent, pageHeaderElement.querySelector('.trip-main'));
   newPointButtonComponent.setClickHandler(openNewPointFormHandler);
+  if (travelPointModel.travelPoints.length === 0) {
+    newPointButtonComponent.element.disabled = true;
+  }
 });
 pointInfoPresenter.init();
