@@ -7,7 +7,7 @@ import { render } from './framework/render.js';
 import PointsApiService from './points-api-service.js';
 import PointInfoPresenter from './presenter/info-point-presenter.js';
 
-const AUTHORIZATION = 'Basic zxcvbnlkjhgfds';
+const AUTHORIZATION = 'Basic zxcvbnlkjhgf';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const pageHeaderElement = document.querySelector('.page-header');
