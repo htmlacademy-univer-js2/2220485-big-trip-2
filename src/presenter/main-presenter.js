@@ -133,7 +133,7 @@ export default class MainPresenter {
   };
 
   #renderNoPoints = () => {
-    this.#noPointComponent = new NoPointsMessageView( this.#filterType);
+    this.#noPointComponent = new NoPointsMessageView(this.#filterType);
     render(this.#noPointComponent, this.#tripPointsContainer, RenderPosition.AFTERBEGIN);
   };
 
